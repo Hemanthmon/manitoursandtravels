@@ -1,0 +1,378 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@config '../../../tailwind.config.mjs';
+
+@custom-variant sm (@media (width >= theme(--breakpoint-sm)));
+@custom-variant md (@media (width >= theme(--breakpoint-md)));
+@custom-variant lg (@media (width >= theme(--breakpoint-lg)));
+@custom-variant xl (@media (width >= theme(--breakpoint-xl)));
+@custom-variant 2xl (@media (width >= theme(--breakpoint-2xl)));
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: unset;
+    font-size: unset;
+  }
+}
+
+@plugin "@tailwindcss/typography";
+
+@source inline("lg:col-span-4");
+@source inline("lg:col-span-6");
+@source inline("lg:col-span-8");
+@source inline("lg:col-span-12");
+
+@theme {
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 86rem;
+  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
+  --font-head: var(--font-head);
+}
+
+@layer utilities {
+  .container {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  @variant sm {
+    .container {
+      max-width: var(--breakpoint-sm);
+    }
+  }
+
+  @variant md {
+    .container {
+      max-width: var(--breakpoint-md);
+    }
+  }
+
+  @variant lg {
+    .container {
+      max-width: 73.75rem;
+    }
+  }
+
+  @variant xl {
+    .container {
+      max-width: 73.75rem;
+    }
+  }
+
+  @variant 2xl {
+    .container {
+      max-width: 73.75rem;
+    }
+  }
+}
+
+/*
+ * Brand tokens extracted from design-reference/index.html.
+ * Navy = trust/safety, Gold = premium/CTA, Ivory = warm not sterile, Emerald = safety accent.
+ * This is a single fixed brand theme — there is no dark-mode toggle.
+ */
+:root {
+  --navy-950: #081426;
+  --navy-900: #0a1a30;
+  --navy-800: #0f2544;
+  --navy-700: #173257;
+  --navy-600: #274469;
+  --ink: #161f2e;
+  --ivory: #fbf9f4;
+  --ivory-dim: #f3eee1;
+  --paper: #ffffff;
+  --border-brand: #e7e2d6;
+  --gold-300: #f0c868;
+  --gold-500: #d4a537;
+  --gold-600: #b9862a;
+  --emerald-600: #1e7a5f;
+  --emerald-100: #e4f2ec;
+  --muted-brand: #5b6472;
+  --shadow-lg-brand: 0 24px 60px -20px rgba(8, 20, 38, 0.35);
+  --shadow-sm-brand: 0 8px 24px -12px rgba(8, 20, 38, 0.25);
+  --radius-brand: 18px;
+
+  /* shadcn/ui primitive mapping — kept for components/ui/* compatibility */
+  --background: var(--ivory);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--gold-500);
+  --primary-foreground: var(--navy-950);
+  --secondary: var(--navy-900);
+  --secondary-foreground: var(--paper);
+  --muted: var(--ivory-dim);
+  --muted-foreground: var(--muted-brand);
+  --accent: var(--ivory-dim);
+  --accent-foreground: var(--navy-900);
+  --destructive: #c0362c;
+  --destructive-foreground: #ffffff;
+  --border: var(--border-brand);
+  --input: var(--border-brand);
+  --ring: var(--gold-500);
+  --radius: var(--radius-brand);
+  --success: var(--emerald-600);
+  --warning: var(--gold-600);
+  --error: #c0362c;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 10px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 6px);
+
+  --color-navy-950: var(--navy-950);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-navy-600: var(--navy-600);
+  --color-ink: var(--ink);
+  --color-ivory: var(--ivory);
+  --color-ivory-dim: var(--ivory-dim);
+  --color-paper: var(--paper);
+  --color-gold-300: var(--gold-300);
+  --color-gold-500: var(--gold-500);
+  --color-gold-600: var(--gold-600);
+  --color-emerald-600: var(--emerald-600);
+  --color-emerald-100: var(--emerald-100);
+  --color-muted-brand: var(--muted-brand);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground min-h-[100vh] flex flex-col antialiased;
+    font-family: var(--font-body), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-head), Georgia, serif;
+    font-weight: 700;
+    line-height: 1.12;
+    color: var(--navy-900);
+  }
+}
+
+@keyframes dashmove {
+  to {
+    stroke-dashoffset: -1000;
+  }
+}
+
+@keyframes drivealong {
+  0% {
+    offset-distance: 0%;
+  }
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes pulse-wa {
+  0%,
+  100% {
+    box-shadow: 0 14px 30px -8px rgba(37, 211, 102, 0.6);
+  }
+  50% {
+    box-shadow:
+      0 14px 30px -4px rgba(37, 211, 102, 0.9),
+      0 0 0 10px rgba(37, 211, 102, 0.12);
+  }
+}
+
+@keyframes float3d {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotateZ(var(--float-rot, 0deg));
+  }
+  50% {
+    transform: translate3d(0, -16px, 40px) rotateZ(var(--float-rot, 0deg));
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 70px;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Clears the sticky header so an anchor target (e.g. #enquiry-form) doesn't land underneath it. */
+section[id] {
+  scroll-margin-top: 90px;
+}
+
+/* ---------- Entrance & hover animations ---------- */
+
+/* Hero content rising in on page load (staggered with animation-delay). */
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(40px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Street lights glowing softly (with the odd flicker). */
+@keyframes lamp-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  48% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 0.55;
+  }
+  52% {
+    opacity: 0.9;
+  }
+}
+
+/* Night-sky stars over the hero landscape. */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+/* Gentle breathing glow behind the hero booking card. */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* Plane in the hero skyline drifting gently as it climbs. */
+@keyframes plane-bob {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(5px, -3px);
+  }
+}
+
+/* Slow zoom on package cover photos. */
+@keyframes kenburns {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Stacked photo slideshow (school transport card): the first photo sits
+   underneath; each photo above fades in for a quarter of the 24s cycle,
+   staggered with animation-delay 6s / 12s / 18s. */
+@keyframes slideshow4 {
+  0% {
+    opacity: 0;
+  }
+  4%,
+  25% {
+    opacity: 1;
+  }
+  29%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Light sweep across gold call-to-action buttons on hover. */
+.btn-shine {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.75s ease;
+  pointer-events: none;
+}
+.btn-shine:hover::after {
+  transform: translateX(120%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

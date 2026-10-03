@@ -1,0 +1,367 @@
+// Prisma schema for the custom admin (Package/Destination/Category/etc.).
+// Lives in its own Postgres schema ("prisma") — originally kept separate from
+// Payload's "public" schema during the Payload -> Prisma migration so Prisma's
+// diffing never touched Payload's tables. Payload's code is now fully removed,
+// but its old "public" schema tables are still sitting in the same Neon database
+// (harmless, just unused disk space) — see the final migration summary for how
+// to drop them if you want to reclaim that space.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["prisma"]
+}
+
+// ==================== Admin auth ====================
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+
+  assignedEnquiries Enquiry[]   @relation("EnquiryAssignedTo")
+  pushTokens        PushToken[]
+
+  @@map("users")
+  @@schema("prisma")
+}
+
+// ==================== Content ====================
+
+model Destination {
+  id              Int      @id @default(autoincrement())
+  slug            String   @unique
+  name            String
+  summary         String
+  description     String?
+  heroImageUrl    String?
+  region          String?
+  bestTimeToVisit String?
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  packages      Package[]
+  galleryImages GalleryImage[]
+  offers        Offer[]
+  enquiries     Enquiry[]
+
+  @@map("destinations")
+  @@schema("prisma")
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  packages Package[]
+
+  @@map("categories")
+  @@schema("prisma")
+}
+
+enum PriceUnit {
+  PER_PERSON
+  PER_GROUP
+  PER_VEHICLE
+
+  @@schema("prisma")
+}
+
+model Package {
+  id              Int         @id @default(autoincrement())
+  slug            String      @unique
+  title           String
+  destinationId   Int
+  destination     Destination @relation(fields: [destinationId], references: [id])
+  categories      Category[]
+  imageUrl        String?
+  summary         String
+  description     String?
+  // Mirrors the real current data shape (see formatDuration()) rather than the
+  // single "durationLabel" string first proposed — that's what the live detail
+  // page actually renders.
+  durationDays    Int
+  durationNights  Int
+  priceFrom       Int
+  priceUnit       PriceUnit   @default(PER_PERSON)
+  bestSeason      String?
+  highlights      String[]
+  inclusions      String[]
+  exclusions      String[]
+  featured        Boolean     @default(false)
+  published       Boolean     @default(false)
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  itineraryDays ItineraryDay[]
+  galleryImages GalleryImage[]
+  reviews       Review[]
+  offers        Offer[]
+  enquiries     Enquiry[]
+
+  @@map("packages")
+  @@schema("prisma")
+}
+
+enum Meal {
+  BREAKFAST
+  LUNCH
+  DINNER
+
+  @@schema("prisma")
+}
+
+model ItineraryDay {
+  id          Int      @id @default(autoincrement())
+  packageId   Int
+  package     Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  dayNumber   Int
+  title       String
+  description String?
+  meals       Meal[]
+  overnightAt String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("itinerary_days")
+  @@schema("prisma")
+}
+
+enum ServiceType {
+  AIRPORT_TRANSFER
+  CITY_RIDE
+  SCHOOL_TRANSPORT
+  TOUR_PACKAGE
+
+  @@schema("prisma")
+}
+
+model GalleryImage {
+  id            Int          @id @default(autoincrement())
+  imageUrl      String
+  caption       String?
+  destinationId Int?
+  destination   Destination? @relation(fields: [destinationId], references: [id])
+  packageId     Int?
+  package       Package?     @relation(fields: [packageId], references: [id])
+  serviceType   ServiceType?
+  order         Int?
+  featured      Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+
+  @@map("gallery_images")
+  @@schema("prisma")
+}
+
+enum ServiceIcon {
+  PLANE
+  CAR
+  BABY
+  MOUNTAIN
+  SHIELD
+  CLOCK
+
+  @@schema("prisma")
+}
+
+model Service {
+  id               Int         @id @default(autoincrement())
+  slug             String      @unique
+  title            String
+  shortDescription String
+  description      String?
+  icon             ServiceIcon @default(CAR)
+  order            Int?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@map("services")
+  @@schema("prisma")
+}
+
+enum CabType {
+  HATCHBACK
+  SEDAN
+  SUV
+
+  @@schema("prisma")
+}
+
+model FareRoute {
+  id             Int      @id @default(autoincrement())
+  fromLocation   String
+  toLocation     String
+  cabType        CabType
+  indicativeFare Int
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("fare_routes")
+  @@schema("prisma")
+}
+
+model Offer {
+  id            Int          @id @default(autoincrement())
+  slug          String       @unique
+  title         String
+  discountLabel String
+  description   String?
+  imageUrl      String?
+  packageId     Int?
+  package       Package?     @relation(fields: [packageId], references: [id])
+  destinationId Int?
+  destination   Destination? @relation(fields: [destinationId], references: [id])
+  validFrom     DateTime?
+  validUntil    DateTime?
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@map("offers")
+  @@schema("prisma")
+}
+
+model Review {
+  id               Int          @id @default(autoincrement())
+  name             String
+  location         String?
+  rating           Int
+  text             String
+  relatedService   ServiceType?
+  relatedPackageId Int?
+  relatedPackage   Package?     @relation(fields: [relatedPackageId], references: [id])
+  featured         Boolean      @default(false)
+  publishedAt      DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@map("reviews")
+  @@schema("prisma")
+}
+
+// ==================== CRM ====================
+
+enum EnquiryType {
+  AIRPORT_TRANSFER
+  CITY_RIDE
+  SCHOOL_TRANSPORT
+  TOUR_PACKAGE
+  GENERAL
+
+  @@schema("prisma")
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  QUOTED
+  BOOKED
+  LOST
+
+  @@schema("prisma")
+}
+
+model Enquiry {
+  id               Int           @id @default(autoincrement())
+  name             String
+  phone            String
+  email            String?
+  type             EnquiryType   @default(GENERAL)
+  packageId        Int?
+  package          Package?      @relation(fields: [packageId], references: [id])
+  destinationId    Int?
+  destination      Destination?  @relation(fields: [destinationId], references: [id])
+  travelDate       DateTime?
+  pax              Int?
+  message          String?
+  // School-transport-only fields (conditional in the admin form, same as before).
+  schoolName       String?
+  pickupLocation   String?
+  numberOfChildren Int?
+  startDate        DateTime?
+  source           String?
+  status           EnquiryStatus @default(NEW)
+  assignedToId     Int?
+  assignedTo       User?         @relation("EnquiryAssignedTo", fields: [assignedToId], references: [id])
+  notes            String?
+  // Set the first time an admin taps "Call" on this enquiry.
+  contactedAt      DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@map("enquiries")
+  @@schema("prisma")
+}
+
+// ==================== Website booking / callback form captures ====================
+
+model Booking {
+  id          Int       @id @default(autoincrement())
+  service     String
+  pickup      String?
+  drop        String?
+  date        String?
+  time        String?
+  name        String?
+  phone       String?
+  // Optional note from the call-back form.
+  message     String?
+  // Which website form it came from: "hero-booking" or "callback".
+  source      String?
+  // Set the first time an admin taps "Call" on this booking.
+  contactedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@map("bookings")
+  @@schema("prisma")
+}
+
+// ==================== Admin app push notifications ====================
+
+// Expo push tokens for admin phones. A token is registered when an admin signs
+// in to the mobile app and removed on sign-out or when Expo reports it invalid.
+model PushToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("push_tokens")
+  @@schema("prisma")
+}
+
+// ==================== Site-wide settings (singleton row) ====================
+
+model SiteSettings {
+  id              Int      @id @default(1)
+  businessName    String   @default("Mani Tours and Travels")
+  phone           String
+  whatsapp        String
+  email           String?
+  address         String?
+  mapEmbedUrl     String?
+  yearsInBusiness Int?
+  ridesCompleted  Int?
+  familiesServed  Int?
+  updatedAt       DateTime @updatedAt
+
+  @@map("site_settings")
+  @@schema("prisma")
+}

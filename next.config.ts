@@ -11,6 +11,8 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
   : process.env.__NEXT_PRIVATE_ORIGIN || 'http://localhost:3000'
 
 const nextConfig: NextConfig = {
+  // Lets a production build run alongside `next dev` (NEXT_DIST_DIR=.next-build).
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   images: {
     localPatterns: [
       {

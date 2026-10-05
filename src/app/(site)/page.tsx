@@ -3,13 +3,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { unstable_cache } from 'next/cache'
 import {
+  ArrowRight,
   Baby,
   Car,
   CheckCircle2,
   Clock,
   IndianRupee,
   Plane,
-  Users,
   MapPin,
   Mountain,
   Phone,
@@ -24,7 +24,9 @@ import { FaqAccordion } from '@/components/site/FaqAccordion'
 import { HeroSkyline } from '@/components/site/HeroSkyline'
 import { Reveal } from '@/components/site/Reveal'
 import { Tilt3D } from '@/components/site/Tilt3D'
+import { HomeStatIcon } from '@/components/site/HomeStatIcon'
 import { getCachedSiteSettings } from '@/lib/getSiteSettings'
+import { homeStatNumber, resolveHomeStats } from '@/lib/homeStats'
 import { prisma } from '@/lib/prisma'
 import { buildTelLink, buildWhatsAppLink, whatsappMessages } from '@/lib/whatsapp'
 import { cn } from '@/utilities/ui'
@@ -201,13 +203,8 @@ export default async function HomePage() {
   const packageCards = homePackages.map(toPackageCardData)
   const phone = siteSettings?.phone || ''
   const whatsapp = siteSettings?.whatsapp || ''
-  // Proof numbers from Site Settings; any that aren't filled in are skipped.
-  const proofStats = [
-    siteSettings?.yearsInBusiness ? { icon: Shield, value: siteSettings.yearsInBusiness, suffix: '+', label: 'Years on the road' } : null,
-    siteSettings?.ridesCompleted ? { icon: Car, value: siteSettings.ridesCompleted, suffix: '+', label: 'Rides completed' } : null,
-    siteSettings?.familiesServed ? { icon: Users, value: siteSettings.familiesServed, suffix: '+', label: 'Families served' } : null,
-    { icon: Clock, text: '24×7', label: 'Dispatch, every day' },
-  ].filter((stat) => stat !== null)
+  // Proof numbers, edited from Website Stats in either admin. Empty ones are skipped.
+  const proofStats = resolveHomeStats(siteSettings).filter((stat) => stat.value)
 
   return (
     <>
@@ -361,18 +358,29 @@ export default async function HomePage() {
           </Reveal>
 
           {packageCards.length > 0 ? (
-            // Flex + fixed widths (not grid) so a short row stays centred.
-            <div className="flex flex-wrap justify-center gap-5">
-              {packageCards.map((pkg, index) => (
-                <Reveal
-                  className="w-full sm:w-[calc(50%-10px)] lg:w-[calc(25%-15px)]"
-                  delay={index * 100}
-                  key={pkg.id}
-                  variant="scale"
-                >
-                  <PackageCard pkg={pkg} />
-                </Reveal>
-              ))}
+            <div className="flex items-end gap-4">
+              {/* Flex + fixed widths (not grid) so a short row stays centred. */}
+              <div className="flex flex-1 flex-wrap justify-center gap-5">
+                {packageCards.map((pkg, index) => (
+                  <Reveal
+                    className="w-full sm:w-[calc(50%-10px)] lg:w-[calc(25%-15px)]"
+                    delay={index * 100}
+                    key={pkg.id}
+                    variant="scale"
+                  >
+                    <PackageCard pkg={pkg} />
+                  </Reveal>
+                ))}
+              </div>
+              {/* Small "more" arrow level with the last row (340px cards); phones use the button below. */}
+              <Link
+                aria-label="Show all packages"
+                className="mb-[148px] hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border-[1.5px] border-white/40 text-gold-300 transition-all hover:translate-x-1 hover:border-gold-300 hover:bg-white/[0.08] lg:flex"
+                href="/packages"
+                title="Show all packages"
+              >
+                <ArrowRight className="h-5 w-5" />
+              </Link>
             </div>
           ) : (
             <p className="text-center text-ivory/65">
@@ -406,10 +414,10 @@ export default async function HomePage() {
               before getting into a car: is this ride actually safe?
             </p>
           </Reveal>
-          {/* Proof numbers from Site Settings */}
+          {/* Proof numbers from Website Stats (web admin / app) */}
       <div className="mb-14 grid grid-cols-2 overflow-hidden rounded-[22px] border border-border bg-paper shadow-[0_30px_60px_-30px_rgba(8,20,38,0.35)] lg:grid-cols-4">
         {proofStats.map((stat, index) => (
-          <Reveal className="h-full" delay={index * 90} key={stat.label}>
+          <Reveal className="h-full" delay={index * 90} key={index}>
             <div
               className={cn(
                 'group flex h-full items-center gap-4 p-5 md:p-7',
@@ -419,18 +427,12 @@ export default async function HomePage() {
               )}
             >
               <span className="hidden h-12 w-12 flex-shrink-0 items-center justify-center rounded-[14px] bg-navy-900 text-gold-300 transition-all duration-300 group-hover:-rotate-6 group-hover:bg-gold-500 group-hover:text-navy-950 sm:flex">
-                <stat.icon className="h-6 w-6" />
+                <HomeStatIcon className="h-6 w-6" icon={stat.icon} />
               </span>
               <span>
                 <span className="block font-head text-[clamp(1.6rem,1.2rem+1.4vw,2.2rem)] font-bold leading-none text-navy-900">
-                  {'value' in stat && stat.value ? (
-                    <>
-                      <CountUp value={stat.value} />
-                      <span className="text-gold-600">{stat.suffix}</span>
-                    </>
-                  ) : (
-                    stat.text
-                  )}
+                  {homeStatNumber(stat.value) !== null ? <CountUp value={homeStatNumber(stat.value)!} /> : stat.value}
+                  {stat.suffix ? <span className="text-gold-600">{stat.suffix}</span> : null}
                 </span>
                 <span className="mt-1.5 block text-[0.82rem] font-semibold text-muted-brand md:text-[0.88rem]">{stat.label}</span>
               </span>

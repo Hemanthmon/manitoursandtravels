@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons'
+import { Image } from 'expo-image'
 import { useRef, useState } from 'react'
 import {
   KeyboardAvoidingView,
@@ -51,9 +52,13 @@ export default function LoginScreen() {
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.brand}>
             <View style={styles.logo}>
-              <Ionicons color={colors.navy950} name="car-sport" size={30} />
+              <Image
+                accessibilityLabel="Mani Tours and Travels"
+                contentFit="contain"
+                source={require('../../assets/logo.png')}
+                style={styles.logoImage}
+              />
             </View>
-            <Text style={styles.brandName}>Mani Tours</Text>
             <Text style={styles.brandSub}>Admin</Text>
           </View>
 
@@ -124,15 +129,13 @@ const styles = StyleSheet.create({
   scroll: { flexGrow: 1, justifyContent: 'center', padding: spacing.xl },
   brand: { alignItems: 'center', marginBottom: spacing.xxl },
   logo: {
-    width: 64,
-    height: 64,
     borderRadius: radius.lg,
-    backgroundColor: colors.gold500,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
     marginBottom: spacing.md,
   },
-  brandName: { fontSize: 26, fontWeight: '700', color: colors.ivory },
+  logoImage: { width: 200, height: 125 },
   brandSub: { fontSize: 14, color: colors.gold300, letterSpacing: 2, textTransform: 'uppercase' },
   panel: {
     backgroundColor: colors.surface,

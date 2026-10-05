@@ -14,6 +14,7 @@ import type {
   EnquiryDetail,
   EnquiryStatus,
   EnquirySummary,
+  HomeStat,
   Lookups,
   PackageDetail,
   PackageInput,
@@ -35,6 +36,7 @@ export const queryKeys = {
   callbacks: ['callbacks'] as const,
   enquiries: (status?: EnquiryStatus) => ['enquiries', status ?? 'ALL'] as const,
   enquiry: (id: number) => ['enquiry', id] as const,
+  homeStats: ['home-stats'] as const,
 }
 
 async function get<T>(url: string, params?: Record<string, unknown>) {
@@ -156,6 +158,23 @@ export function useAddCategory() {
   return useMutation({
     mutationFn: (name: string) => send<{ id: number; title: string }>('post', '/categories', { name }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.lookups }),
+  })
+}
+
+// ---------- Website stats (home page proof numbers) ----------
+
+export function useHomeStats() {
+  return useQuery({
+    queryKey: queryKeys.homeStats,
+    queryFn: async () => (await get<{ stats: HomeStat[] }>('/home-stats')).stats,
+  })
+}
+
+export function useSaveHomeStats() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (stats: HomeStat[]) => (await send<{ stats: HomeStat[] }>('put', '/home-stats', stats)).stats,
+    onSuccess: (stats) => queryClient.setQueryData(queryKeys.homeStats, stats),
   })
 }
 

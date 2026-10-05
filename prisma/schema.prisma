@@ -360,6 +360,10 @@ model SiteSettings {
   yearsInBusiness Int?
   ridesCompleted  Int?
   familiesServed  Int?
+  // The 4 "proof numbers" on the home page, edited from Website Stats in
+  // either admin. Shape: HomeStat[] (src/lib/homeStats.ts). Null = derive
+  // from the three columns above.
+  homeStats       Json?
   updatedAt       DateTime @updatedAt
 
   @@map("site_settings")

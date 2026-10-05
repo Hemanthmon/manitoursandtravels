@@ -10,6 +10,7 @@ const links = [
   { href: '/admin/packages', label: 'Packages' },
   { href: '/admin/bookings', label: 'Bookings' },
   { href: '/admin/callbacks', label: 'Call-backs' },
+  { href: '/admin/website', label: 'Website stats' },
 ]
 
 export function AdminNav() {

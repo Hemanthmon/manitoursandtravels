@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import Constants from 'expo-constants'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useFocusEffect } from 'expo-router'
+import { router, useFocusEffect } from 'expo-router'
 import { useCallback, useState } from 'react'
 import {
   Alert,
@@ -199,6 +199,12 @@ export default function ProfileScreen() {
 
         {/* ---------- Website ---------- */}
         <Section title="Website">
+          <Row
+            detail="Years, rides, families… on the home page"
+            icon="stats-chart-outline"
+            label="Edit website stats"
+            onPress={() => router.push('/website-stats')}
+          />
           <Row icon="globe-outline" label="Open website" onPress={() => SITE_URL && Linking.openURL(SITE_URL)} trailingIcon="open-outline" />
           <Row
             detail="Same login as this app"

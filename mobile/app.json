@@ -16,7 +16,7 @@
       "package": "com.manitours.admin",
       "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#0a1a30",
+        "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -45,9 +45,9 @@
         "expo-splash-screen",
         {
           "image": "./assets/splash-icon.png",
-          "imageWidth": 160,
+          "imageWidth": 240,
           "resizeMode": "contain",
-          "backgroundColor": "#0a1a30"
+          "backgroundColor": "#ffffff"
         }
       ],
       [
@@ -60,6 +60,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "eb58030a-65d6-4c74-b6bf-f6faa9655b7a"
+      }
+    },
+    "owner": "hemanth_mon"
   }
 }

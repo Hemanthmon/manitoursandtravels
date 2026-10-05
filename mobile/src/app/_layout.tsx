@@ -62,6 +62,7 @@ function RootNavigator() {
         <Stack.Screen name="packages/new" options={{ title: 'New package' }} />
         <Stack.Screen name="packages/[id]" options={{ title: 'Edit package' }} />
         <Stack.Screen name="enquiries/[id]" options={{ title: 'Enquiry' }} />
+        <Stack.Screen name="website-stats" options={{ title: 'Website stats' }} />
       </Stack.Protected>
     </Stack>
   )

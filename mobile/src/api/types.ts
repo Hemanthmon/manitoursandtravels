@@ -147,3 +147,7 @@ export type DashboardStats = {
   recentCallbacks: Booking[]
   recentEnquiries: EnquirySummary[]
 }
+
+// Home page "proof numbers" (Website stats). Always 4 boxes; an empty value hides one.
+export type HomeStatIcon = 'shield' | 'car' | 'users' | 'clock' | 'star' | 'map' | 'plane' | 'award' | 'heart' | 'calendar'
+export type HomeStat = { icon: HomeStatIcon; value: string; suffix: string; label: string }

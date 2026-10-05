@@ -100,6 +100,7 @@ export default function HomeScreen() {
       <View style={styles.actions}>
         <QuickAction icon="add-circle" label="New package" onPress={() => router.push('/packages/new')} primary />
         <QuickAction icon="file-tray-full" label="Requests" onPress={() => router.push('/requests')} />
+        <QuickAction icon="stats-chart" label="Site stats" onPress={() => router.push('/website-stats')} />
         <QuickAction icon="globe-outline" label="Website" onPress={() => SITE_URL && Linking.openURL(SITE_URL)} />
       </View>
 
